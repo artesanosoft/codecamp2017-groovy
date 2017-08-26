@@ -11,11 +11,19 @@ println root.Document.name
 //}
 subwaylines = []
 root.Document.Folder[0].Placemark.each {
-  subwayline = new SubwayLine(name: it.name, coords: it.LineString.coordinates.text())
+  subwayline = new SubwayLine(name: it.name.text().trim(), coords: it.LineString.coordinates.text().trim())
   subwaylines.add subwayline
+}
+stations = []
+root.Document.Folder[1].Placemark.each {
+  station = new Station(name: it.name.text().trim(), coords: it.Point.coordinates.text().trim())
+  stations << station
 }
 
 println subwaylines
+println stations
+
+
 
 @ToString
 class SubwayLine {
@@ -24,6 +32,7 @@ class SubwayLine {
   List<Station> stations
 }
 
+@ToString
 class Station {
   String name
   String coords
