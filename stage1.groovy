@@ -11,29 +11,38 @@ println root.Document.name
 //}
 subwaylines = []
 root.Document.Folder[0].Placemark.each {
-  subwayline = new SubwayLine(name: it.name.text().trim(), coords: it.LineString.coordinates.text().trim())
+  subwayline = new SubwayLine(name: it.name.text().trim(), textCoordinates: it.LineString.coordinates.text().trim())
   subwaylines.add subwayline
 }
 stations = []
 root.Document.Folder[1].Placemark.each {
-  station = new Station(name: it.name.text().trim(), coords: it.Point.coordinates.text().trim())
+  textCoordinates = it.Point.coordinates.text().trim()
+  coords = textCoordinates.split(",")*.toFloat()
+  station = new Station(name: it.name.text().trim(), textCoordinates: textCoordinates )
   stations << station
 }
 
+subwaylines.each { line ->
+  stations.each { station ->
+    if (line.textCoordinates.contains(station.textCoordinates)) {
+      line.stations << station
+    }
+  }
+}
+
 println subwaylines
-println stations
-
-
 
 @ToString
 class SubwayLine {
   String name
-  String coords
-  List<Station> stations
+  String textCoordinates
+  List<Station> stations = []
 }
 
 @ToString
 class Station {
   String name
-  String coords
+  String textCoordinates
+  Float latitude
+  Float longitude
 }
