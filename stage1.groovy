@@ -18,7 +18,11 @@ stations = []
 root.Document.Folder[1].Placemark.each {
   textCoordinates = it.Point.coordinates.text().trim()
   coords = textCoordinates.split(",")*.toFloat()
-  station = new Station(name: it.name.text().trim(), textCoordinates: textCoordinates )
+  station = new Station(
+    name: it.name.text().trim(),
+    textCoordinates: textCoordinates,
+    latitude: coords[0],
+    longitude: coords[1] )
   stations << station
 }
 
@@ -30,7 +34,16 @@ subwaylines.each { line ->
   }
 }
 
-println subwaylines
+subwaylines.each { line ->
+  println "* $line.name"
+  line.stations.each { s ->
+    println "\t $s.name $s.textCoordinates"
+  }
+  println "*"*100
+  line.stations.sort().each { s ->
+    println "\t $s.name $s.textCoordinates"
+  }
+}
 
 @ToString
 class SubwayLine {
@@ -40,9 +53,9 @@ class SubwayLine {
 }
 
 @ToString
+@EqualsAndHashCode(includes = ["order"])
 class Station {
+  Integer order
   String name
   String textCoordinates
-  Float latitude
-  Float longitude
 }
