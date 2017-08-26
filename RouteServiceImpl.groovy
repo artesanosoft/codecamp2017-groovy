@@ -22,13 +22,27 @@ class RouteServiceImpl implements RouteService {
         }
       }
     }
-    int stationsVisited = 0
+
     def instructions = []
     graphs.each { g ->
+      boolean shouldCount = false
+      int stationsVisited = 0
       g.each { pair ->
-        stationsVisited++
-        if(pair[1].name == destiny){
+        if(pair[0]?.name == origin) shouldCount = true
+        if(shouldCount) stationsVisited++
+        if(pair[1]?.name == destiny && shouldCount){
           instructions << [origin:origin, destiny:destiny, stations: stationsVisited]
+        }
+      }
+      if(!instructions){
+        shouldCount = false
+        stationsVisited = 0
+        g*.reverse().reverse().each { pair ->
+          if(pair[0]?.name == origin) shouldCount = true
+          if(shouldCount) stationsVisited++
+          if(pair[1]?.name == destiny && shouldCount){
+            instructions << [origin:origin, destiny:destiny, stations: stationsVisited]
+          }
         }
       }
     }
