@@ -31,7 +31,7 @@ class RouteServiceImpl implements RouteService {
         if(pair[0]?.name == origin) shouldCount = true
         if(shouldCount) stationsVisited++
         if(pair[1]?.name == destiny && shouldCount){
-          instructions << [origin:origin, destiny:destiny, stations: stationsVisited]
+          instructions << [origin:origin, destiny:destiny, stations: stationsVisited, direction: g[-1][-1].name]
         }
       }
       if(!instructions){
@@ -41,7 +41,7 @@ class RouteServiceImpl implements RouteService {
           if(pair[0]?.name == origin) shouldCount = true
           if(shouldCount) stationsVisited++
           if(pair[1]?.name == destiny && shouldCount){
-            instructions << [origin:origin, destiny:destiny, stations: stationsVisited]
+            instructions << [origin:origin, destiny:destiny, stations: stationsVisited, direction:g*.reverse().reverse()[-1][-1].name]
           }
         }
       }
