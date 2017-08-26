@@ -11,28 +11,28 @@ println root.Document.name
 //}
 subwaylines = []
 root.Document.Folder[0].Placemark.each {
-  subwayline = new SubwayLine(name: it.name.text().trim(), textCoordinates: it.LineString.coordinates.text().trim())
+  textCoordinates = it.LineString.coordinates.text().trim()
+  subwayline = new SubwayLine(name: it.name.text().trim(), textCoordinates: textCoordinates)
+  textCoordinates.split("\n").eachWithIndex { c, i ->
+    station = new Station(order: i, textCoordinates: c.trim())
+    subwayline.stations << station
+  }
   subwaylines.add subwayline
 }
-stations = []
+
 root.Document.Folder[1].Placemark.each {
   textCoordinates = it.Point.coordinates.text().trim()
-  coords = textCoordinates.split(",")*.toFloat()
-  station = new Station(
-    name: it.name.text().trim(),
-    textCoordinates: textCoordinates,
-    latitude: coords[0],
-    longitude: coords[1] )
-  stations << station
-}
-
-subwaylines.each { line ->
-  stations.each { station ->
-    if (line.textCoordinates.contains(station.textCoordinates)) {
-      line.stations << station
+  stationName = it.name.text().trim()
+  subwaylines.each { line ->
+    if (line.textCoordinates.contains(textCoordinates)) {
+      station = line.stations.find { s ->
+        s.textCoordinates == textCoordinates
+      }
+      station.name = stationName
     }
   }
 }
+
 
 subwaylines.each { line ->
   println "* $line.name"
